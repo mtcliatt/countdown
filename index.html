@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101916">
+  <meta name="description" content="Your daily countdown to May 25, 2027. See days remaining, days passed, and your progress at a glance.">
+  <title>One day closer</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101916'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%23304438' stroke-width='4'/%3E%3Cpath d='M16 6a10 10 0 1 1-9.5 13' fill='none' stroke='%23c5f277' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    :root{color-scheme:dark;font-family: ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f3f5ee;background:#101916;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0;min-height:100svh;display:grid;place-items:center;padding:32px 24px}main{width:100%;max-width:440px}header{display:flex;align-items:center;gap:10px;margin-bottom:42px;font-size:14px;color:#b4c0b8;font-weight:500;letter-spacing:.03em}.mark{width:18px;height:18px;border:2px solid #c5f277;border-radius:50%;position:relative}.mark:after{content:"";position:absolute;inset:4px;background:#c5f277;border-radius:50%}p,h1{margin:0}.today{font-size:16px;color:#b4c0b8;line-height:1.5}h1{font-size:clamp(88px,24vw,128px);font-weight:600;letter-spacing:-.065em;line-height:1.1;font-variant-numeric:tabular-nums;margin-top:15px}.remaining{font-size:22px;color:#dce3dc;margin-top:3px}.destination{font-size:16px;color:#98aa9e;margin-top:12px}.progress-section{margin-top:44px}.progress-label{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:14px;font-size:16px;color:#b4c0b8}.percentage{font-size:26px;letter-spacing:-.035em;color:#c5f277;font-weight:600;font-variant-numeric:tabular-nums}progress{display:block;appearance:none;-webkit-appearance:none;border:0;width:100%;height:10px;border-radius:20px;overflow:hidden;background:#2b3b32}progress::-webkit-progress-bar{background:#2b3b32;border-radius:20px}progress::-webkit-progress-value{background:#c5f277;border-radius:20px}progress::-moz-progress-bar{background:#c5f277;border-radius:20px}.stats{display:grid;grid-template-columns:1fr 1fr;margin-top:30px;padding-bottom:30px;border-bottom:1px solid #2b3b32}.stat+.stat{border-left:1px solid #2b3b32;padding-left:30px}.value{display:block;font-size:32px;line-height:1.2;font-weight:500;letter-spacing:-.035em;font-variant-numeric:tabular-nums}.label{display:block;font-size:14px;color:#98aa9e;margin-top:7px}.dates{display:flex;justify-content:space-between;gap:16px;margin-top:22px}.dates div:last-child{text-align:right}.date-label{display:block;text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:#98aa9e;margin-bottom:7px}.date{font-size:14px;color:#dce3dc}footer{margin-top:38px;font-size:12px;color:#98aa9e;line-height:1.5}noscript{display:block;color:#c5f277;margin-top:20px}@media(max-width:360px){body{padding:24px 20px}header{margin-bottom:30px}.progress-section{margin-top:32px}.stat+.stat{padding-left:22px}}@media(max-height:700px){header{margin-bottom:24px}.progress-section{margin-top:28px}footer{margin-top:24px}}
+  </style>
+</head>
+<body>
+  <main>
+    <header><span class="mark" aria-hidden="true"></span>One day closer</header>
+    <p class="today"><time id="today">Today</time></p>
+    <h1 id="remaining">—</h1>
+    <p class="remaining" id="remaining-label">days to go</p>
+    <p class="destination">Until May 25, 2027</p>
+    <section class="progress-section" aria-label="Your progress">
+      <div class="progress-label"><span>Journey completed</span><span class="percentage" id="percentage">—</span></div>
+      <progress id="progress" max="100" value="0" aria-label="Journey completed"></progress>
+      <div class="stats">
+        <div class="stat"><span class="value" id="elapsed">—</span><span class="label">days passed</span></div>
+        <div class="stat"><span class="value" id="total">445</span><span class="label">days in total</span></div>
+      </div>
+      <div class="dates">
+        <div><span class="date-label">Started</span><time class="date" datetime="2026-03-06">Mar 6, 2026</time></div>
+        <div><span class="date-label">Finish line</span><time class="date" datetime="2027-05-25">May 25, 2027</time></div>
+      </div>
+    </section>
+    <noscript>Enable JavaScript to see your current countdown.</noscript>
+  </main>
+  <script>
+    const DAY = 86400000;
+    const START = Date.UTC(2026, 2, 6);
+    const END = Date.UTC(2027, 4, 25);
+    function calculate(now) {
+      // Compare calendar dates in UTC to avoid daylight-saving time errors.
+      const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+      const total = (END - START) / DAY;
+      const elapsed = Math.max(0, (today - START) / DAY);
+      return { total, elapsed, remaining: Math.max(0, (END - today) / DAY), percent: Math.min(100, elapsed / total * 100) };
+    }
+    function update() {
+      const now = new Date();
+      const data = calculate(now);
+      const byId = id => document.getElementById(id);
+      byId('today').textContent = new Intl.DateTimeFormat('en-US', {weekday:'long',month:'long',day:'numeric',year:'numeric'}).format(now);
+      byId('today').dateTime = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+      byId('remaining').textContent = data.remaining.toLocaleString('en-US');
+      byId('remaining-label').textContent = data.remaining === 0 ? 'You made it.' : data.remaining === 1 ? 'day to go' : 'days to go';
+      byId('elapsed').textContent = data.elapsed.toLocaleString('en-US');
+      byId('total').textContent = data.total.toLocaleString('en-US');
+      byId('percentage').textContent = `${data.percent.toFixed(1)}%`;
+      byId('progress').value = data.percent;
+    }
+    update();
+    setInterval(update, 1000);
+    window.addEventListener('pageshow', update);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) update(); });
+  </script>
+</body>
+</html>
