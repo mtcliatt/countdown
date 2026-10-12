@@ -10,25 +10,26 @@
   <style>
     :root{color-scheme:dark;font-family: ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f3f5ee;background:#101916;font-synthesis:none}
     *{box-sizing:border-box}body{margin:0;min-height:100svh;display:grid;place-items:center;padding:32px 24px}main{width:100%;max-width:440px}header{display:flex;align-items:center;gap:10px;margin-bottom:42px;font-size:14px;color:#b4c0b8;font-weight:500;letter-spacing:.03em}.mark{width:18px;height:18px;border:2px solid #c5f277;border-radius:50%;position:relative}.mark:after{content:"";position:absolute;inset:4px;background:#c5f277;border-radius:50%}p,h1{margin:0}.today{font-size:16px;color:#b4c0b8;line-height:1.5}h1{font-size:clamp(88px,24vw,128px);font-weight:600;letter-spacing:-.065em;line-height:1.1;font-variant-numeric:tabular-nums;margin-top:15px}.remaining{font-size:22px;color:#dce3dc;margin-top:3px}.destination{font-size:16px;color:#98aa9e;margin-top:12px}.progress-section{margin-top:44px}.progress-label{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:14px;font-size:16px;color:#b4c0b8}.percentage{font-size:26px;letter-spacing:-.035em;color:#c5f277;font-weight:600;font-variant-numeric:tabular-nums}progress{display:block;appearance:none;-webkit-appearance:none;border:0;width:100%;height:10px;border-radius:20px;overflow:hidden;background:#2b3b32}progress::-webkit-progress-bar{background:#2b3b32;border-radius:20px}progress::-webkit-progress-value{background:#c5f277;border-radius:20px}progress::-moz-progress-bar{background:#c5f277;border-radius:20px}.stats{display:grid;grid-template-columns:1fr 1fr;margin-top:30px;padding-bottom:30px;border-bottom:1px solid #2b3b32}.stat+.stat{border-left:1px solid #2b3b32;padding-left:30px}.value{display:block;font-size:32px;line-height:1.2;font-weight:500;letter-spacing:-.035em;font-variant-numeric:tabular-nums}.label{display:block;font-size:14px;color:#98aa9e;margin-top:7px}.dates{display:flex;justify-content:space-between;gap:16px;margin-top:22px}.dates div:last-child{text-align:right}.date-label{display:block;text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:#98aa9e;margin-bottom:7px}.date{font-size:14px;color:#dce3dc}footer{margin-top:38px;font-size:12px;color:#98aa9e;line-height:1.5}noscript{display:block;color:#c5f277;margin-top:20px}@media(max-width:360px){body{padding:24px 20px}header{margin-bottom:30px}.progress-section{margin-top:32px}.stat+.stat{padding-left:22px}}@media(max-height:700px){header{margin-bottom:24px}.progress-section{margin-top:28px}footer{margin-top:24px}}
+    .mark{flex-shrink:0}#language-toggle{margin-left:auto;flex-shrink:0;border:1px solid #52664e;border-radius:20px;padding:8px 12px;background:transparent;color:#c5f277;font:inherit;letter-spacing:0;cursor:pointer}#language-toggle:hover{background:#253629}#language-toggle:focus-visible{outline:2px solid #c5f277;outline-offset:4px}header{flex-wrap:wrap}
   </style>
 </head>
 <body>
   <main>
-    <header><span class="mark" aria-hidden="true"></span>One day closer</header>
+    <header><span class="mark" aria-hidden="true"></span><span id="site-title">One day closer</span><button id="language-toggle" type="button" lang="es" aria-label="Ver en español" hidden>Español</button></header>
     <p class="today"><time id="today">Today</time></p>
     <h1 id="remaining">—</h1>
     <p class="remaining" id="remaining-label">days to go</p>
     <p class="destination">Until May 25, 2027</p>
     <section class="progress-section" aria-label="Your progress">
-      <div class="progress-label"><span>Journey completed</span><span class="percentage" id="percentage">—</span></div>
+      <div class="progress-label"><span id="journey-label">Journey completed</span><span class="percentage" id="percentage">—</span></div>
       <progress id="progress" max="100" value="0" aria-label="Journey completed"></progress>
       <div class="stats">
-        <div class="stat"><span class="value" id="elapsed">—</span><span class="label">days passed</span></div>
-        <div class="stat"><span class="value" id="total">445</span><span class="label">days in total</span></div>
+        <div class="stat"><span class="value" id="elapsed">—</span><span class="label" id="elapsed-label">days passed</span></div>
+        <div class="stat"><span class="value" id="total">445</span><span class="label" id="total-label">days in total</span></div>
       </div>
       <div class="dates">
-        <div><span class="date-label">Started</span><time class="date" datetime="2026-03-06">Mar 6, 2026</time></div>
-        <div><span class="date-label">Finish line</span><time class="date" datetime="2027-05-25">May 25, 2027</time></div>
+        <div><span class="date-label" id="start-label">Started</span><time class="date" datetime="2026-03-06">Mar 6, 2026</time></div>
+        <div><span class="date-label" id="end-label">Finish line</span><time class="date" datetime="2027-05-25">May 25, 2027</time></div>
       </div>
     </section>
     <noscript>Enable JavaScript to see your current countdown.</noscript>
@@ -37,6 +38,13 @@
     const DAY = 86400000;
     const START = Date.UTC(2026, 2, 6);
     const END = Date.UTC(2027, 4, 25);
+    const translations = {
+      en: { locale: 'en-US', title: 'One day closer', progress: 'Your progress', journey: 'Journey completed', elapsed: 'days passed', total: 'days in total', start: 'Started', end: 'Finish line', until: 'Until', done: 'You made it.', day: 'day to go', days: 'days to go', toggle: 'Español', toggleLabel: 'Ver en español', description: 'Your daily countdown to May 25, 2027. See days remaining, days passed, and your progress at a glance.' },
+      es: { locale: 'es-ES', title: 'Un día más cerca', progress: 'Tu progreso', journey: 'Camino recorrido', elapsed: 'días transcurridos', total: 'días en total', start: 'Inicio', end: 'Meta', until: 'Hasta el', done: '¡Lo lograste!', day: 'día restante', days: 'días restantes', toggle: 'English', toggleLabel: 'View in English', description: 'Tu cuenta regresiva hasta el 25 de mayo de 2027. Consulta los días restantes, los días transcurridos y tu progreso de un vistazo.' }
+    };
+    let language = 'en';
+    try { if (localStorage.getItem('countdown-language') === 'es') language = 'es'; } catch {}
+    const byId = id => document.getElementById(id);
     function calculate(now) {
       // Compare calendar dates in UTC to avoid daylight-saving time errors.
       const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
@@ -47,17 +55,42 @@
     function update() {
       const now = new Date();
       const data = calculate(now);
-      const byId = id => document.getElementById(id);
-      byId('today').textContent = new Intl.DateTimeFormat('en-US', {weekday:'long',month:'long',day:'numeric',year:'numeric'}).format(now);
+      const text = translations[language];
+      const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
+      document.documentElement.lang = language;
+      document.title = text.title;
+      document.querySelector('meta[name="description"]').content = text.description;
+      byId('site-title').textContent = text.title;
+      byId('language-toggle').textContent = text.toggle;
+      byId('language-toggle').lang = language === 'en' ? 'es' : 'en';
+      byId('language-toggle').setAttribute('aria-label', text.toggleLabel);
+      byId('today').textContent = new Intl.DateTimeFormat(text.locale, { ...dateOptions, weekday: 'long' }).format(now);
       byId('today').dateTime = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-      byId('remaining').textContent = data.remaining.toLocaleString('en-US');
-      byId('remaining-label').textContent = data.remaining === 0 ? 'You made it.' : data.remaining === 1 ? 'day to go' : 'days to go';
-      byId('elapsed').textContent = data.elapsed.toLocaleString('en-US');
-      byId('total').textContent = data.total.toLocaleString('en-US');
-      byId('percentage').textContent = `${data.percent.toFixed(1)}%`;
+      byId('remaining').textContent = data.remaining.toLocaleString(text.locale);
+      byId('remaining-label').textContent = data.remaining === 0 ? text.done : data.remaining === 1 ? text.day : text.days;
+      document.querySelector('.destination').textContent = `${text.until} ${new Intl.DateTimeFormat(text.locale, { ...dateOptions, timeZone: 'UTC' }).format(END)}`;
+      document.querySelector('.progress-section').setAttribute('aria-label', text.progress);
+      byId('journey-label').textContent = text.journey;
+      byId('elapsed-label').textContent = text.elapsed;
+      byId('total-label').textContent = text.total;
+      byId('start-label').textContent = text.start;
+      byId('end-label').textContent = text.end;
+      const shortDate = new Intl.DateTimeFormat(text.locale, { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+      document.querySelector('time[datetime="2026-03-06"]').textContent = shortDate.format(START);
+      document.querySelector('time[datetime="2027-05-25"]').textContent = shortDate.format(END);
+      byId('elapsed').textContent = data.elapsed.toLocaleString(text.locale);
+      byId('total').textContent = data.total.toLocaleString(text.locale);
+      byId('percentage').textContent = new Intl.NumberFormat(text.locale, { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(data.percent / 100);
       byId('progress').value = data.percent;
+      byId('progress').setAttribute('aria-label', text.journey);
     }
+    byId('language-toggle').addEventListener('click', () => {
+      language = language === 'en' ? 'es' : 'en';
+      try { localStorage.setItem('countdown-language', language); } catch {}
+      update();
+    });
     update();
+    byId('language-toggle').hidden = false;
     setInterval(update, 1000);
     window.addEventListener('pageshow', update);
     document.addEventListener('visibilitychange', () => { if (!document.hidden) update(); });
